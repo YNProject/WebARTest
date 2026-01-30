@@ -10,60 +10,56 @@
 
     <style>
         .arjs-loader {
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 100%; width: 100%; position: absolute; top: 0; left: 0;
+            background-color: rgba(0, 0, 0, 0.8); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
         }
-
-        .arjs-loader div {
-            text-align: center;
-            color: white;
-            font-family: sans-serif;
-        }
-
+        .arjs-loader div { text-align: center; color: white; font-family: sans-serif; }
         #start-button {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 16px 32px;
-            z-index: 10000;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            padding: 16px 32px; z-index: 10000; background: #007bff; color: white;
+            border: none; border-radius: 50px; font-size: 18px; font-weight: bold;
+            display: none; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
-//----------------------------------------------
+
 <body style="margin: 0; overflow: hidden;">
     <div class="arjs-loader">
         <div>Loading NFT Marker...</div>
     </div>
     <button id="start-button">タップしてARを開始</button>
 
-    <a-scene vr-mode-ui="enabled: false;" renderer="logarithmicDepthBuffer: true; antialias: true; precision: medium;"
-        embedded arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
+    <a-scene vr-mode-ui="enabled: false;" 
+             renderer="logarithmicDepthBuffer: true; antialias: true; precision: medium;"
+             embedded 
+             arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
+        
         <a-assets>
-            <video id="video" src="videos/wonderAcute202601.mp4" preload="auto" loop="true" muted="true" playsinline
-                webkit-playsinline crossorigin="anonymous"></video>
+            <video id="video" 
+                   src="videos/wonderAcute202601.mp4" 
+                   preload="auto" 
+                   loop="true" 
+                   muted="true" 
+                   playsinline
+                   webkit-playsinline 
+                   crossorigin="anonymous"></video>
         </a-assets>
 
-        <a-nft id="nft-marker" type="nft" url="nft/wonderAcute1" smooth="true" smoothCount="30" smoothTolerance="0.05"
-            smoothThreshold="15">
-            <a-video id="video-plane" src="#video" width="75" height="42.5" position="0 0 0" rotation="-90 0 0"
-                visible="false"></a-video>
+        <a-nft id="nft-marker" 
+               type="nft" 
+               url="./nft/wonderAcute1" 
+               smooth="true" 
+               smoothCount="30" 
+               smoothTolerance="0.05"
+               smoothThreshold="15">
+            <a-video id="video-plane" 
+                     src="#video" 
+                     width="150" 
+                     height="85" 
+                     position="0 0 0" 
+                     rotation="-90 0 0"
+                     visible="false"></a-video>
         </a-nft>
 
         <a-entity camera></a-entity>
@@ -76,7 +72,9 @@
         const loader = document.querySelector(".arjs-loader");
         const marker = document.querySelector("#nft-marker");
 
+        // NFTの読み込み完了イベント
         window.addEventListener('arjs-nft-loaded', () => {
+            console.log("NFT Loaded Success!");
             loader.style.display = "none";
             startButton.style.display = "block";
         });
@@ -86,29 +84,26 @@
             video.play().then(() => {
                 video.pause();
                 startButton.style.display = "none";
-            });
+            }).catch(e => console.error("Audio Play Error:", e));
         });
 
         marker.addEventListener("markerFound", () => {
+            console.log("Marker Found!");
             videoPlane.setAttribute("visible", "true");
             video.play();
 
-            // 検出後、段階的にスムージングを強化して「吸い付く」ようにする
             setTimeout(() => {
-                // 動きをかなり重くする（震えを吸収）
                 marker.setAttribute("smoothCount", "80");
                 marker.setAttribute("smoothTolerance", "0.1");
-                console.log("Stability: High Mode");
             }, 1000);
         });
 
         marker.addEventListener("markerLost", () => {
+            console.log("Marker Lost");
             video.pause();
-            // パラメータを初期値にリセット
             marker.setAttribute("smoothCount", "30");
             marker.setAttribute("smoothTolerance", "0.05");
         });
     </script>
 </body>
-
 </html>
