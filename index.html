@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>NFT AR Video - High Stability</title>
     <meta charset="utf-8" />
@@ -25,9 +24,7 @@
 </head>
 
 <body style="margin: 0; overflow: hidden;">
-    <div class="arjs-loader">
-        <div>Loading NFT Marker...</div>
-    </div>
+    <div class="arjs-loader"><div>Loading NFT Marker...</div></div>
     <button id="start-button">タップしてARを開始</button>
 
     <a-scene vr-mode-ui="enabled: false;" 
@@ -37,7 +34,7 @@
         
         <a-assets>
             <video id="video" 
-                   src="videos/wonderAcute202601.mp4" 
+                   src="/WebARTest/videos/wonderAcute202601.mp4" 
                    preload="auto" 
                    loop="true" 
                    muted="true" 
@@ -48,7 +45,7 @@
 
         <a-nft id="nft-marker" 
                type="nft" 
-               url="./nft/wonderAcute1" 
+               url="/WebARTest/nft/wonderAcute1" 
                smooth="true" 
                smoothCount="30" 
                smoothTolerance="0.05"
@@ -72,7 +69,6 @@
         const loader = document.querySelector(".arjs-loader");
         const marker = document.querySelector("#nft-marker");
 
-        // NFTの読み込み完了イベント
         window.addEventListener('arjs-nft-loaded', () => {
             console.log("NFT Loaded Success!");
             loader.style.display = "none";
@@ -84,25 +80,16 @@
             video.play().then(() => {
                 video.pause();
                 startButton.style.display = "none";
-            }).catch(e => console.error("Audio Play Error:", e));
+            });
         });
 
         marker.addEventListener("markerFound", () => {
-            console.log("Marker Found!");
             videoPlane.setAttribute("visible", "true");
             video.play();
-
-            setTimeout(() => {
-                marker.setAttribute("smoothCount", "80");
-                marker.setAttribute("smoothTolerance", "0.1");
-            }, 1000);
         });
 
         marker.addEventListener("markerLost", () => {
-            console.log("Marker Lost");
             video.pause();
-            marker.setAttribute("smoothCount", "30");
-            marker.setAttribute("smoothTolerance", "0.05");
         });
     </script>
 </body>
